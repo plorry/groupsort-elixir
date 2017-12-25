@@ -87,7 +87,8 @@ defmodule Groupsort do
   defp min_pairing_groupset(_, groupset1, []), do: groupset1
 
   defp min_pairing_groupset(history, groupset1, groupset2) do
-    [groupset1, groupset2] |> Enum.min_by(&(get_groupset_pair_count(history, &1)))
+    [groupset1, groupset2]
+    |> Enum.min_by(&(get_groupset_pair_count(history, &1)))
   end
 
   @doc """
