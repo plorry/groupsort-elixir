@@ -70,39 +70,21 @@ defmodule Groupsort do
     Enum.reduce(groupset, 0, fn (group, acc) -> get_group_pair_count(history, group) + acc end)
   end
 
-  def combinations(_, 0), do: [[]]
-  def combinations([], _), do: []
+  defp combinations(_, 0), do: [[]]
+  defp combinations([], _), do: []
 
-  def combinations([x|xs], n) do
+  defp combinations([x|xs], n) do
     (for y <- combinations(xs, n - 1), do: [x|y]) ++ combinations(xs, n)
   end
   
-  @doc """
-  Returns the group with the lowest pairing count between 2 given groups according to the history
+  defp min_pairing_group(_, group1, []), do: group1
 
-  ## Examples
-    iex> h = %{{1, 2} => 1, {1, 3} => 2, {1, 4} => 2, {2, 3} => 2, {2, 4} => 2, {3, 4} => 1}
-    iex> Groupsort.min_pairing_group(h, [1, 2], [1, 3])
-    [1, 2]
-    iex> Groupsort.min_pairing_group(h, [1, 2, 3, 4], [])
-    [1, 2, 3, 4]
-  """
-  def min_pairing_group(_, group1, []), do: group1
-
-  def min_pairing_group(history, group1, group2),
+  defp min_pairing_group(history, group1, group2),
     do: Enum.min_by([group1, group2], &(get_group_pair_count(history, &1)))
 
-  @doc """
-  Returns the groupset with the lower pairing count, according to a given history
-  
-  ## Examples
-    iex> h = %{{1, 2} => 1, {1, 3} => 2, {1, 4} => 2, {2, 3} => 2, {2, 4} => 2, {3, 4} => 1}
-    iex> Groupsort.min_pairing_groupset(h, [[1, 2], [3, 4]], [[1, 3], [2, 4]])
-    [[1, 2], [3, 4]]
-  """
-  def min_pairing_groupset(_, groupset1, []), do: groupset1
+  defp min_pairing_groupset(_, groupset1, []), do: groupset1
 
-  def min_pairing_groupset(history, groupset1, groupset2),
+  defp min_pairing_groupset(history, groupset1, groupset2),
     do: Enum.min_by([groupset1, groupset2], &(get_groupset_pair_count(history, &1)))
 
   def sort(history, student_list, group_config, groupset \\ [])
