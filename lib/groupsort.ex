@@ -38,7 +38,7 @@ defmodule Groupsort do
     {2, 3}
   """
   def make_pair(student1, student2) do
-    {min(student1, student2), max(student1, student2)}
+    [student1, student2] |> Enum.sort() |> List.to_tuple()
   end
 
   @doc """
@@ -87,7 +87,7 @@ defmodule Groupsort do
   defp min_pairing_groupset(_, groupset1, []), do: groupset1
 
   defp min_pairing_groupset(history, groupset1, groupset2) do
-    Enum.min_by([groupset1, groupset2], &(get_groupset_pair_count(history, &1)))
+    [groupset1, groupset2] |> Enum.min_by(&(get_groupset_pair_count(history, &1)))
   end
 
   @doc """
@@ -114,9 +114,9 @@ defmodule Groupsort do
   def sort(_, student_list, [_|[]], groupset), do: [student_list | groupset]
 
   def sort(history, student_list, [group_size|group_config], groupset) do
-    (for group <- combinations(student_list, group_size),
-      do: sort(history, student_list -- group, group_config, [group | groupset])
-    )
-    |> Enum.reduce([], &(min_pairing_groupset(history, &1, &2)))
+    student_list
+    |> combinations(group_size)
+    |> Enum.map(&(sort(history, student_list -- &1, group_config, [&1 | groupset])))
+    |> Enum.reduce(&(min_pairing_groupset(history, &1, &2)))
   end
 end
