@@ -14,12 +14,8 @@ defmodule Groupsort do
 
   ## Examples
     iex> h = %{{1, 2} => 1}
-    %{{1, 2} => 1}
     iex> Groupsort.add_pair(h, {1, 2})
     %{{1, 2} => 2}
-
-    iex> h = %{{1, 2} => 1}
-    %{{1, 2} => 1}
     iex> Groupsort.add_pair(h, {2, 3})
     %{{1, 2} => 1, {2, 3} => 1}
   """
@@ -50,13 +46,13 @@ defmodule Groupsort do
 
   ## Examples
     iex> history = %{{1, 2} => 4, {1, 3} => 3, {2, 3} => 7}
-    iex> Groupsort.get_pairing_count(history, 1, 3)
+    iex> Groupsort.get_pairing_count(history, {1, 3})
     3
-    iex> Groupsort.get_pairing_count(history, 2, 3)
+    iex> Groupsort.get_pairing_count(history, {2, 3})
     7
   """
-  def get_pairing_count(history, student1, student2) do
-    history[{student1, student2}]
+  def get_pairing_count(history, pair) do
+    history[pair]
   end
 
   @doc """
@@ -73,12 +69,12 @@ defmodule Groupsort do
   def get_group_pair_count(history, group) do
     group
     |> combinations(2)
-    |> Enum.reduce(0, fn ([x, y], acc) -> get_pairing_count(history, x, y) + acc end)
+    |> Enum.reduce(0, &(get_pairing_count(history, List.to_tuple(&1)) + &2))
   end
 
   def get_groupset_pair_count(history, groupset) do
     groupset
-    |> Enum.reduce(0, fn (group, acc) -> get_group_pair_count(history, group) + acc end)
+    |> Enum.reduce(0, &(get_group_pair_count(history, &1) + &2))
   end
 
   def combinations(_, 0), do: [[]]
@@ -90,8 +86,9 @@ defmodule Groupsort do
 
   defp min_pairing_groupset(_, groupset1, []), do: groupset1
 
-  defp min_pairing_groupset(history, groupset1, groupset2),
-    do: Enum.min_by([groupset1, groupset2], &(get_groupset_pair_count(history, &1)))
+  defp min_pairing_groupset(history, groupset1, groupset2) do
+    Enum.min_by([groupset1, groupset2], &(get_groupset_pair_count(history, &1)))
+  end
 
   @doc """
   Groupsort.sort is the primary method of this module. Given a history of student pairings,
