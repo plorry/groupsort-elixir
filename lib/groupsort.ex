@@ -4,8 +4,8 @@ defmodule Groupsort do
   by looking at a given history, and minimizing the number of repeated historical
   pairs.
 
-  WIP - current implementation is BRUTE FORCE. It is efficient, but explodes for
-  numbers greater than ~15 students.
+  WIP - current implementation is BRUTE FORCE. It gets the best solution, but explodes
+  for numbers greater than ~15 students.
   """
 
   @doc """
