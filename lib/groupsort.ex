@@ -1,10 +1,4 @@
 defmodule Groupsort do
-  # group_history - map: tuple of 2 ints -> int
-  # student - int (id)
-  # group_config - tuple of ints
-  def get_pairing_count(history, student1, student2) do
-    history[{student1, student2}]
-  end
   
   @doc """
   Takes a history map and increments the count at the given pair key.
@@ -29,8 +23,8 @@ defmodule Groupsort do
   end
 
   @doc """
-  Takes two students and returns a pair tuple, ordered
-  from lower to higher ID value
+  Helper function for making sure pair fetching & creation is always consistently ordered.
+  Given two IDs, gives you the tuple of those IDs, ordered, for passing around as a pair.
 
   ## Examples
     iex> Groupsort.make_pair(2, 3)
@@ -41,6 +35,20 @@ defmodule Groupsort do
   """
   def make_pair(student1, student2) do
     {min(student1, student2), max(student1, student2)}
+  end
+
+  @doc """
+  Returns the historical pairing count for the pair of students given
+
+  ## Examples
+    iex> history = %{{1, 2} => 4, {1, 3} => 3, {2, 3} => 7}
+    iex> Groupsort.get_pairing_count(history, 1, 3)
+    3
+    iex> Groupsort.get_pairing_count(history, 2, 3)
+    7
+  """
+  def get_pairing_count(history, student1, student2) do
+    history[{student1, student2}]
   end
   
   @doc """
