@@ -48,11 +48,11 @@ defmodule Groupsort do
     iex> history = %{{1, 2} => 4, {1, 3} => 3, {2, 3} => 7}
     iex> Groupsort.get_pairing_count(history, {1, 3})
     3
-    iex> Groupsort.get_pairing_count(history, {2, 3})
-    7
+    iex> Groupsort.get_pairing_count(history, {1, 5})
+    0
   """
   def get_pairing_count(history, pair) do
-    history[pair]
+    history[pair] || 0
   end
 
   @doc """
@@ -76,7 +76,16 @@ defmodule Groupsort do
     groupset
     |> Enum.reduce(0, &(get_group_pair_count(history, &1) + &2))
   end
-
+  
+  @doc """
+  Gives a list of the unique combinations of size n of a given list.
+  Courtesy -> https://stackoverflow.com/a/30587756
+  Probably makes sense to extract into its own module eventually.
+  
+  ## Examples
+    iex> Groupsort.combinations([1, 2, 3], 2)
+    [[1, 2], [1, 3], [2, 3]]
+  """
   def combinations(_, 0), do: [[]]
   def combinations([], _), do: []
 
@@ -114,7 +123,7 @@ defmodule Groupsort do
   def sort(history, student_list, group_config, groupset \\ [])
   def sort(_, student_list, [_|[]], groupset), do: [student_list | groupset]
 
-  def sort(history, student_list, [group_size|group_config], groupset) do
+  def sort(history, student_list, [group_size | group_config], groupset) do
     student_list
     |> combinations(group_size)
     |> Enum.map(&(sort(history, student_list -- &1, group_config, [&1 | groupset])))
