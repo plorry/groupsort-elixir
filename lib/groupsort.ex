@@ -1,5 +1,13 @@
 defmodule Groupsort do
-  
+  @moduledoc """
+  Elixir module to group students efficiently, maxmizing the number of novel pairs
+  by looking at a given history, and minimizing the number of repeated historical
+  pairs.
+
+  WIP - current implementation is BRUTE FORCE. It is efficient, but explodes for
+  numbers greater than ~15 students.
+  """
+
   @doc """
   Takes a history map and increments the count at the given pair key.
   If no such historical count exists, a new count is started at 1.
@@ -50,7 +58,7 @@ defmodule Groupsort do
   def get_pairing_count(history, student1, student2) do
     history[{student1, student2}]
   end
-  
+
   @doc """
   Takes a history and a group of IDs, and returns the sum of the historical
   pairing count for each unique pair in the group
@@ -63,11 +71,14 @@ defmodule Groupsort do
     3
   """
   def get_group_pair_count(history, group) do
-    Enum.reduce(combinations(group, 2), 0, fn ([x, y], acc) -> get_pairing_count(history, x, y) + acc end)
+    group
+    |> combinations(2)
+    |> Enum.reduce(0, fn ([x, y], acc) -> get_pairing_count(history, x, y) + acc end)
   end
 
   def get_groupset_pair_count(history, groupset) do
-    Enum.reduce(groupset, 0, fn (group, acc) -> get_group_pair_count(history, group) + acc end)
+    groupset
+    |> Enum.reduce(0, fn (group, acc) -> get_group_pair_count(history, group) + acc end)
   end
 
   def combinations(_, 0), do: [[]]
@@ -76,11 +87,6 @@ defmodule Groupsort do
   def combinations([x|xs], n) do
     (for y <- combinations(xs, n - 1), do: [x|y]) ++ combinations(xs, n)
   end
-  
-  defp min_pairing_group(_, group1, []), do: group1
-
-  defp min_pairing_group(history, group1, group2),
-    do: Enum.min_by([group1, group2], &(get_group_pair_count(history, &1)))
 
   defp min_pairing_groupset(_, groupset1, []), do: groupset1
 
