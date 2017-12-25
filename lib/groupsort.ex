@@ -70,10 +70,10 @@ defmodule Groupsort do
     Enum.reduce(groupset, 0, fn (group, acc) -> get_group_pair_count(history, group) + acc end)
   end
 
-  defp combinations(_, 0), do: [[]]
-  defp combinations([], _), do: []
+  def combinations(_, 0), do: [[]]
+  def combinations([], _), do: []
 
-  defp combinations([x|xs], n) do
+  def combinations([x|xs], n) do
     (for y <- combinations(xs, n - 1), do: [x|y]) ++ combinations(xs, n)
   end
   
