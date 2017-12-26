@@ -20,10 +20,7 @@ defmodule Groupsort do
     %{{1, 2} => 1, {2, 3} => 1}
   """
   def add_pair(history, pair) do
-    case history do
-      %{^pair => c} -> %{history | pair => c + 1}
-      _ -> Map.put(history, pair, 1)
-    end
+    Map.put(history, pair, get_pairing_count(history, pair) + 1)
   end
 
   @doc """
