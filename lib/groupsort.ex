@@ -40,6 +40,7 @@ defmodule Groupsort do
 
   @doc """
   Returns the historical pairing count for the pair of students given
+  or zero in the case that there is no entry for the pair in the history.
 
   ## Examples
     iex> history = %{{1, 2} => 4, {1, 3} => 3, {2, 3} => 7}
@@ -90,13 +91,6 @@ defmodule Groupsort do
     (for y <- combinations(xs, n - 1), do: [x|y]) ++ combinations(xs, n)
   end
 
-  defp min_pairing_groupset(_, groupset1, []), do: groupset1
-
-  defp min_pairing_groupset(history, groupset1, groupset2) do
-    [groupset1, groupset2]
-    |> Enum.min_by(&(get_groupset_pair_count(history, &1)))
-  end
-
   @doc """
   Groupsort.sort is the primary method of this module. Given a history of student pairings,
   a student_list (list of IDs), and a desired group_config, this function will return a
@@ -107,7 +101,7 @@ defmodule Groupsort do
     iex> history = %{{1, 2} => 4, {1, 3} => 3, {1, 4} => 0, {2, 3} => 0, {2, 4} => 2, {3, 4} => 1}
     iex> student_list = [1, 2, 3, 4]
     iex> Groupsort.sort(history, student_list, [2, 2])
-    [[1, 4], [2, 3]]
+    [[2, 3], [1, 4]]
 
   In the above example, we have 4 students, and we want to create a groupset that consists
   of two groups of two (the sum of our group_config values must naturally total the count
@@ -123,7 +117,7 @@ defmodule Groupsort do
   def sort(history, student_list, [group_size | group_config], groupset) do
     student_list
     |> combinations(group_size)
-    |> Enum.map(&(sort(history, student_list -- &1, group_config, [&1 | groupset])))
-    |> Enum.reduce(&(min_pairing_groupset(history, &1, &2)))
+    |> Stream.map(&(sort(history, student_list -- &1, group_config, [&1 | groupset])))
+    |> Enum.min_by(&(get_groupset_pair_count(history, &1)))
   end
 end
