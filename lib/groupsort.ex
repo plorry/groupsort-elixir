@@ -38,7 +38,7 @@ defmodule Groupsort do
     {2, 3}
   """
   def make_pair(student1, student2) do
-    [student1, student2] |> Enum.sort() |> List.to_tuple()
+    Enum.min_max([student1, student2])
   end
 
   @doc """
