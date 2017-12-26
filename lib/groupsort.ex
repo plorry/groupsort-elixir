@@ -74,7 +74,7 @@ defmodule Groupsort do
     groupset
     |> Enum.reduce(0, &(get_group_pair_count(history, &1) + &2))
   end
- 
+
   @doc """
   Gives a list of the unique combinations of size n of a given list.
   Courtesy -> https://stackoverflow.com/a/30587756
