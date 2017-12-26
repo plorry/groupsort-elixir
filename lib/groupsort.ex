@@ -22,7 +22,7 @@ defmodule Groupsort do
   def add_pair(history, pair) do
     case history do
       %{^pair => c} -> %{history | pair => c + 1}
-      _ -> Map.merge(history, %{pair => 1})
+      _ -> Map.put(history, pair, 1)
     end
   end
 
